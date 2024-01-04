@@ -1,0 +1,8 @@
+Django==3.2.6
+langchain # Replace <version> with the appropriate version of langchain
+openai==0.27.2  # Check for the latest version on PyPI
+pytz==2021.3
+djangorestframework
+django-cors-headers
+faiss-cpu
+
