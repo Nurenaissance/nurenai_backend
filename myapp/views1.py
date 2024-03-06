@@ -7,7 +7,6 @@ from langchain.document_loaders import PyPDFLoader
 #from langchain.text_splitter import CharacterTextSplitter
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import pinecone
 from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
 from openai import OpenAI
@@ -16,14 +15,13 @@ import os
 import re
 from langchain.vectorstores import FAISS
 import openai
-import pinecone
+
 from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 client = OpenAI()
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 import os
 import uuid  # Import the uuid module for generating unique filenames
-import pinecone
 blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=pdffornurenai;AccountKey=NfaInebhlvguuN9ZziAdwy1gyKZIfqmX1W1U1k/g/e0z1ZEsWqC7NXt8wSfWIQBusiN87/swIG95+AStJbrZTQ==;EndpointSuffix=core.windows.net")
 pinecone.init(api_key="d7af7a08-e691-4789-810d-4e1274fd7080", environment="gcp-starter")
 index = pinecone.Index("sampledoc")
