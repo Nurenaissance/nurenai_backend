@@ -16,7 +16,7 @@ from langchain.llms import OpenAI
 
 @csrf_exempt
 def query_pdf(query):
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(openai_api_key="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")
 
     # Load from local storage
     persisted_vectorstore = FAISS.load_local(r"C:\Users\Adarsh\MyProject\lang\backend\gita_index_constitution", embeddings)
