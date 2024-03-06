@@ -5,6 +5,7 @@ import tempfile
 import os
 from openai import OpenAI
 client = OpenAI()
+OpenAI.api_key = "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"
 from django.utils import timezone
 import uuid 
 import traceback
