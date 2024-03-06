@@ -23,7 +23,7 @@ from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 import os
 import uuid  # Import the uuid module for generating unique filenames
 blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=pdffornurenai;AccountKey=NfaInebhlvguuN9ZziAdwy1gyKZIfqmX1W1U1k/g/e0z1ZEsWqC7NXt8wSfWIQBusiN87/swIG95+AStJbrZTQ==;EndpointSuffix=core.windows.net")
-pinecone.init(api_key="d7af7a08-e691-4789-810d-4e1274fd7080", environment="gcp-starter")
+
 index = pinecone.Index("sampledoc")
 container_name = "pdf"
 container_client = blob_service_client.get_container_client(container_name)
@@ -110,7 +110,7 @@ def upload_pdf_view(request):
 
     loader = PyPDFLoader(file_path)
     documents = loader.load()
-    embeddings=OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(openai_api_key="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")
     # Split document in chunks
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     docs = text_splitter.split_documents(documents)
