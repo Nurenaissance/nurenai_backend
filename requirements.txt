@@ -1,13 +1,8 @@
 Django==3.2.6
 langchain # Replace <version> with the appropriate version of langchain
-openai  # Check for the latest version on PyPI
+openai==0.27.2  # Check for the latest version on PyPI
 pytz==2021.3
 djangorestframework
 django-cors-headers
 faiss-cpu==1.7.4
-azure.storage.blob
-pypdf
-langchain-community
-tiktoken
-twilio
-requests
+
