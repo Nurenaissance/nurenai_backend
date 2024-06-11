@@ -98,17 +98,10 @@ def query_pdf(query,prompt,zip_name_path):
         download_and_extract_zip(blob_client, downloaded_zip_path, extracted_folder_path)
 
     # Continue with the rest of your query logic
-<<<<<<< HEAD
     #text_field = "document_type"
     embed = OpenAIEmbeddings()
     #index = pinecone.Index("sampledoc")
     loaded_vectorstore = FAISS.load_local(extracted_folder_path, embed)
-=======
-    text_field = "document_type"
-    embeddings = OpenAIEmbeddings(openai_api_key="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")
-    index = pinecone.Index("sampledoc")
-    loaded_vectorstore = FAISS.load_local(extracted_folder_path, embeddings)
->>>>>>> f14c58d1623da2f856e6786dd729cc01ceb06e53
     #vectorstore = Pinecone(
      # index, embed , text_field
     #)
@@ -127,14 +120,11 @@ def query_pdf(query,prompt,zip_name_path):
     #retriever=vectorstore.as_retriever()
     retriever=loaded_vectorstore.as_retriever()
     )
-<<<<<<< HEAD
     #qa_with_sources = RetrievalQAWithSourcesChain.from_chain_type(
     #llm=llm,
     #chain_type="stuff",
     #retriever=loaded_vectorstore.as_retriever(search_type="mmr")
     #)
-=======
->>>>>>> f14c58d1623da2f856e6786dd729cc01ceb06e53
     #embeddings = OpenAIEmbeddings()
 
     # Load from local storage
