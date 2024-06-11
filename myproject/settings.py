@@ -25,8 +25,7 @@ SECRET_KEY = "django-insecure-p!y5zv+85q806#d5-0dm3r)8=5$2x_+8n&lm9#70pzvd$kc-c6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["nurenaibackendsms.azurewebsites.net","e95b-14-142-75-54.ngrok-free.app","127.0.0.1"]
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
