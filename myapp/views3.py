@@ -35,6 +35,14 @@ from django.views.decorators.csrf import csrf_exempt
 from langchain.chains import RetrievalQAWithSourcesChain
 from openai import OpenAI
 client = OpenAI()
+OpenAI.api_key = "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"
+from django.utils import timezone
+import uuid 
+import traceback
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+from langchain.chains import RetrievalQA
+from langchain.llms import OpenAI
 
 
 #from langchain.text_splitter import CharacterTextSplitter

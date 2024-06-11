@@ -1,13 +1,22 @@
 Django==3.2.6
 langchain # Replace <version> with the appropriate version of langchain
-openai==0.27.2  # Check for the latest version on PyPI
+openai  # Check for the latest version on PyPI
 pytz==2021.3
 djangorestframework
 django-cors-headers
 faiss-cpu==1.7.4
+<<<<<<< HEAD
 unstructured
 pdf2image
 docx2txt
 pdfminer
 pillow_heif
 cv2
+=======
+azure.storage.blob
+pypdf
+langchain-community
+tiktoken
+twilio
+requests
+>>>>>>> f14c58d1623da2f856e6786dd729cc01ceb06e53

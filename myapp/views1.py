@@ -14,6 +14,23 @@ from azure.storage.blob import BlobServiceClient
 from langchain_community.document_loaders import Docx2txtLoader
 
 blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=pdffornurenai;AccountKey=NfaInebhlvguuN9ZziAdwy1gyKZIfqmX1W1U1k/g/e0z1ZEsWqC7NXt8wSfWIQBusiN87/swIG95+AStJbrZTQ==;EndpointSuffix=core.windows.net")
+from langchain.chains import RetrievalQA
+from langchain.llms import OpenAI
+from openai import OpenAI
+import shutil
+import os
+import re
+from langchain.vectorstores import FAISS
+import openai
+
+from langchain.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+client = OpenAI()
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+import os
+import uuid  # Import the uuid module for generating unique filenames
+blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=pdffornurenai;AccountKey=NfaInebhlvguuN9ZziAdwy1gyKZIfqmX1W1U1k/g/e0z1ZEsWqC7NXt8wSfWIQBusiN87/swIG95+AStJbrZTQ==;EndpointSuffix=core.windows.net")
+
 container_name = "pdf"
 container_client = blob_service_client.get_container_client(container_name)
 def download_blob(blob_client, local_file_name):

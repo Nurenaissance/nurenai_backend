@@ -23,14 +23,13 @@ from langchain.chains import RetrievalQAWithSourcesChain
 #from langchain.text_splitter import CharacterTextSplitter
 
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import Pinecone
+
 from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
 from openai import OpenAI
-import pinecone
 import re
 blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=pdffornurenai;AccountKey=NfaInebhlvguuN9ZziAdwy1gyKZIfqmX1W1U1k/g/e0z1ZEsWqC7NXt8wSfWIQBusiN87/swIG95+AStJbrZTQ==;EndpointSuffix=core.windows.net")
-pinecone.init(api_key="d7af7a08-e691-4789-810d-4e1274fd7080", environment="gcp-starter")
+
 container_name = "pdf"
 container_client = blob_service_client.get_container_client(container_name)
 
@@ -99,10 +98,17 @@ def query_pdf(query,prompt,zip_name_path):
         download_and_extract_zip(blob_client, downloaded_zip_path, extracted_folder_path)
 
     # Continue with the rest of your query logic
+<<<<<<< HEAD
     #text_field = "document_type"
     embed = OpenAIEmbeddings()
     #index = pinecone.Index("sampledoc")
     loaded_vectorstore = FAISS.load_local(extracted_folder_path, embed)
+=======
+    text_field = "document_type"
+    embeddings = OpenAIEmbeddings(openai_api_key="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")
+    index = pinecone.Index("sampledoc")
+    loaded_vectorstore = FAISS.load_local(extracted_folder_path, embeddings)
+>>>>>>> f14c58d1623da2f856e6786dd729cc01ceb06e53
     #vectorstore = Pinecone(
      # index, embed , text_field
     #)
@@ -121,11 +127,14 @@ def query_pdf(query,prompt,zip_name_path):
     #retriever=vectorstore.as_retriever()
     retriever=loaded_vectorstore.as_retriever()
     )
+<<<<<<< HEAD
     #qa_with_sources = RetrievalQAWithSourcesChain.from_chain_type(
     #llm=llm,
     #chain_type="stuff",
     #retriever=loaded_vectorstore.as_retriever(search_type="mmr")
     #)
+=======
+>>>>>>> f14c58d1623da2f856e6786dd729cc01ceb06e53
     #embeddings = OpenAIEmbeddings()
 
     # Load from local storage
