@@ -61,7 +61,7 @@ def upload_pdf_view(request):
 
     documents = loader.load()
     os.remove(local_file_name)
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings("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")
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     docs = text_splitter.split_documents(documents)
 
