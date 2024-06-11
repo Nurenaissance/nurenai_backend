@@ -11,5 +11,5 @@ docx2txt
 pdfminer
 pillow_heif
 langchain-community
-
+azure-storage-blob
 
