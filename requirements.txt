@@ -10,5 +10,6 @@ pdf2image
 docx2txt
 pdfminer
 pillow_heif
+langchain-community
 
 
