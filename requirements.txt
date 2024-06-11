@@ -10,10 +10,5 @@ pdf2image
 docx2txt
 pdfminer
 pillow_heif
-cv2
-azure.storage.blob
-pypdf
-langchain-community
-tiktoken
-twilio
-requests
+
+
