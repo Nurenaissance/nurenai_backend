@@ -1,11 +1,12 @@
 # views.py
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from twilio.twiml.messaging_response import MessagingResponse
+import json
 import requests
+from twilio.twiml.messaging_response import MessagingResponse
 
 def get_result_from_query(query: str, zipName: str, prompt: str) -> str:
-    url = 'https://nurenai2backend.azurewebsites.net/api/get-pdf/'
+    url = 'http://127.0.0.1:8000/api/get-pdf/'
     headers = {'Content-Type': 'application/json'}
 
     data = {
@@ -22,12 +23,13 @@ def get_result_from_query(query: str, zipName: str, prompt: str) -> str:
         print(f"An error occurred: {e}")
         return ''
 
+
 @csrf_exempt
 def incoming_sms(request):
     if request.method == 'POST':
         # Get the message the user sent to our Twilio number
         body = request.POST.get('Body', None)
-
+        
         print(f"Received message: {body}")  # Add this print statement to check the received message
 
         # Start our TwiML response
@@ -81,8 +83,7 @@ def incoming_sms(request):
 
         print(f"Response sent: {str(resp)}")  # Add this print statement to check the response before returning
 
-        # Return the TwiML response directly as an XML string
         return HttpResponse(str(resp), content_type='application/xml')
     else:
         print("Error: Only POST requests are allowed for this endpoint")
-        return HttpResponse('<error>Only POST requests are allowed for this endpoint</error>', content_type='application/xml', status=405)
+        return JsonResponse({'error': 'Only POST requests are allowed for this endpoint'}, status=405)

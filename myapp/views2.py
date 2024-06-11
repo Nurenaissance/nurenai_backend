@@ -6,13 +6,15 @@ from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from django.http import JsonResponse
 import json
+import requests
 from django.views.decorators.csrf import csrf_exempt
 import os
 import shutil
+import logging
 import faiss
 from langchain.vectorstores import FAISS
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
-
+from langchain.callbacks import get_openai_callback
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from langchain.chains import RetrievalQAWithSourcesChain
@@ -32,6 +34,7 @@ pinecone.init(api_key="d7af7a08-e691-4789-810d-4e1274fd7080", environment="gcp-s
 container_name = "pdf"
 container_client = blob_service_client.get_container_client(container_name)
 
+logging.basicConfig(level=logging.INFO)
 '''class CustomMetadataRetriever:
     def __init__(self, vectorstore: Pinecone, metadata_condition: dict):
         self.vectorstore = vectorstore
@@ -55,29 +58,50 @@ container_client = blob_service_client.get_container_client(container_name)
 '''
 @csrf_exempt
 def download_and_extract_zip(blob_client, downloaded_zip_path, extracted_folder_path):
-    with open(downloaded_zip_path, "wb") as data:
-        data.write(blob_client.download_blob().readall())
+    try:
+        with open(downloaded_zip_path, "wb") as data:
+            data.write(blob_client.download_blob().readall())
 
-    shutil.unpack_archive(downloaded_zip_path, extracted_folder_path)
+        # Add logging to identify when the extraction starts
+        logging.info(f"Starting extraction from {downloaded_zip_path} to {extracted_folder_path}")
+
+        shutil.unpack_archive(downloaded_zip_path, extracted_folder_path)
+
+        # Add logging to identify when the extraction is successful
+        logging.info(f"Extraction successful")
+    except Exception as e:
+        # Add logging to capture the exception details
+        logging.error(f"Error during download and extraction: {e}")
+
+    
 @csrf_exempt
-def query_pdf(query, zip_name_path):
+def query_pdf(query,prompt,zip_name_path):
     # Assuming that container_client is defined globally
 
     # Define paths
-    downloaded_zip_path = r"C:\Users\Adarsh\MyProject\lang\vectorstores\downloaded_gita_index_constitution.zip"
-    extracted_folder_path = r"C:\Users\Adarsh\MyProject\lang\vectorstores\downloaded_gita_index_constitution"
+    # Define base paths
+    base_path = r"C:\Users\Adarsh\MyProject\lang\vectorstores"
+    
+    # Extract zip name without extension
+    zip_name = os.path.splitext(os.path.basename(zip_name_path))[0]
 
+    # Define paths based on zip name
+    downloaded_zip_path = os.path.join(base_path, f"downloaded_{zip_name}.zip")
+    extracted_folder_path = os.path.join(base_path, f"downloaded_{zip_name}")
+
+    #subfolder_name = os.path.splitext(os.path.basename(zip_name_path))[0]
+    #subfolder_path = os.path.join(extracted_folder_path, subfolder_name)
     # Check if the data has already been downloaded and extracted
     if not os.path.exists(downloaded_zip_path) or not os.path.exists(extracted_folder_path):
         # Download and extract the zip file
-        blob_name = f"C:/Users/Adarsh/MyProject/lang/vectorstores/{zip_name_path}"
+        blob_name = f"{zip_name_path}"
         blob_client = container_client.get_blob_client(blob_name)
         download_and_extract_zip(blob_client, downloaded_zip_path, extracted_folder_path)
 
     # Continue with the rest of your query logic
-    text_field = "document_type"
+    #text_field = "document_type"
     embed = OpenAIEmbeddings()
-    index = pinecone.Index("sampledoc")
+    #index = pinecone.Index("sampledoc")
     loaded_vectorstore = FAISS.load_local(extracted_folder_path, embed)
     #vectorstore = Pinecone(
      # index, embed , text_field
@@ -97,11 +121,11 @@ def query_pdf(query, zip_name_path):
     #retriever=vectorstore.as_retriever()
     retriever=loaded_vectorstore.as_retriever()
     )
-    qa_with_sources = RetrievalQAWithSourcesChain.from_chain_type(
-    llm=llm,
-    chain_type="stuff",
-    retriever=loaded_vectorstore.as_retriever(search_type="mmr")
-    )
+    #qa_with_sources = RetrievalQAWithSourcesChain.from_chain_type(
+    #llm=llm,
+    #chain_type="stuff",
+    #retriever=loaded_vectorstore.as_retriever(search_type="mmr")
+    #)
     #embeddings = OpenAIEmbeddings()
 
     # Load from local storage
@@ -111,8 +135,10 @@ def query_pdf(query, zip_name_path):
     # Use RetrievalQA chain for orchestration
     #qa = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type="stuff", retriever=persisted_vectorstore.as_retriever())
 
-    #custom_prompt="Answer as if you are krishna guiding arjuna. Answer in 10 words"
-    custom_prompt="Answer only in 15 words using the data from the document. Answer like you are krishna"
+    #custom_prompt=""
+    custom_prompt=prompt
+    
+    #custom_prompt="Answer only in 15 words using the data from the document. Answer like you are krishna"
     # Combine the custom prompt with the user's query
     full_query = custom_prompt + query
 
@@ -121,7 +147,9 @@ def query_pdf(query, zip_name_path):
     # query,  # our search query
     # k=3  # return 3 most relevant docs
     #    )   
-    result = qa.run(full_query)
+    with get_openai_callback() as cb:
+        result = qa.run(full_query)
+        print(cb.total_cost)
     #result=qa_with_sources(full_query)
 
     # Return the result
@@ -134,13 +162,75 @@ def query_pdf_view(request):
             # Assuming the message is sent in the 'message' field
             message = data.get('message')
             zip_name=data.get('zipName')
+            prompt=data.get('prompt')
+            #zip_name="e99204bd-5df1-49c7-b642-f667084b9633.zip"
             # Call your query_pdf function
-            result =query_pdf(message,zip_name_path=zip_name)
+            result =query_pdf(message,prompt,zip_name_path=zip_name)
 
             # You can modify this response format based on your needs
             response_data = {
                 'answer': result,
             }
-
+            print(response_data)
             return JsonResponse(response_data)
        
+@csrf_exempt
+def phone_call(request):
+        data = json.loads(request.body.decode('utf-8'))
+        number=data.get('phone_number')
+        zipname=data.get('zipName')
+        backend_prompt=data.get('backend_prompt')
+        url = "https://api.bland.ai/v1/calls"
+        prompt = """
+        BACKGROUND INFO: 
+        You are an assistant. Be really kind to the client. If the user specifically ask for expert advise the response is{{backend_response}}
+        """
+        payload = {
+            "phone_number": "+91" + number,
+            "task": prompt,
+            "model": "enhanced",
+            "reduce_latency": True,
+            "voice_id": 0,
+            "tools":[{
+                "name": "SendUserUtterance",
+                "description": "Call for expert advise",
+                "speech":"Hold on a second",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                    "transcript": {
+                        "type":"string"
+                    }
+                    },
+                    "required": ["transcript"]
+                },
+                "url": "https://127.0.0.1:8000/get-pdf/",
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "message": "{{input.transcript}}",
+                    "zipName":zipname,
+                    "prompt":backend_prompt
+                },        
+                "response_data": [
+                    {
+                    "name": "backend_response",
+                    "data": "$.answer"
+                    }
+                    ]
+                }]
+            }
+        headers = {
+            "authorization": "sk-7b7ga99r8bjlzd32o0gxm0cm4euirmjah50mzbxmt6rjcg0z05mm4jhmk29ckjfm69",
+            "Content-Type": "application/json"
+        }
+
+        response = requests.request("POST", url, json=payload, headers=headers)
+        if response.status_code == 200:
+        # Return a JsonResponse with the appropriate content
+            return JsonResponse({'message': 'success'})
+        else:
+        # Return an appropriate error response
+            return JsonResponse({'error': 'An error occurred during the phone call request'}, status=500)
