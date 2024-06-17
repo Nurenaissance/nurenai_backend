@@ -12,4 +12,4 @@ pdfminer
 pillow_heif
 langchain-community
 azure-storage-blob
-
+langchain-openai
