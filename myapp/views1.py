@@ -1,11 +1,12 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from langchain.document_loaders import PyPDFLoader, UnstructuredWordDocumentLoader, CSVLoader
+from langchain_community.document_loaders import PyPDFLoader, UnstructuredWordDocumentLoader, CSVLoader
 from langchain_community.document_loaders.image import UnstructuredImageLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
+
 from langchain_community.document_loaders import ImageCaptionLoader
 import os
 import shutil
@@ -61,7 +62,7 @@ def upload_pdf_view(request):
 
     documents = loader.load()
     os.remove(local_file_name)
-    embeddings = OpenAIEmbeddings("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")
+    embeddings = OpenAIEmbeddings(api_key="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", model="text-embedding-3-large")
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     docs = text_splitter.split_documents(documents)
 

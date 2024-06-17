@@ -13,8 +13,7 @@ schema = {
 
 
 
-
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 #from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 

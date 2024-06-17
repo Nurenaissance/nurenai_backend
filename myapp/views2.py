@@ -1,5 +1,5 @@
 
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 #from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
@@ -22,7 +22,7 @@ from langchain.chains import RetrievalQAWithSourcesChain
 
 #from langchain.text_splitter import CharacterTextSplitter
 
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
@@ -99,9 +99,9 @@ def query_pdf(query,prompt,zip_name_path):
 
     # Continue with the rest of your query logic
     #text_field = "document_type"
-    embed = OpenAIEmbeddings("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")
+    embed = OpenAIEmbeddings(api_key="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", model="text-embedding-3-large")
     #index = pinecone.Index("sampledoc")
-    loaded_vectorstore = FAISS.load_local(extracted_folder_path, embed)
+    loaded_vectorstore = FAISS.load_local(extracted_folder_path, embed,allow_dangerous_deserialization=True)
     #vectorstore = Pinecone(
      # index, embed , text_field
     #)
