@@ -100,7 +100,7 @@ def query_pdf(query,zip_name):
 
     # Continue with the rest of your query logic
    
-    embed = OpenAIEmbeddings("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")
+    embed = OpenAIEmbeddings("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")
     
     loaded_vectorstore = FAISS.load_local(extracted_folder_path, embed)
     #vectorstore = Pinecone(

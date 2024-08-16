@@ -63,7 +63,7 @@ def upload_pdf_view(request):
     documents = loader.load()
     os.remove(local_file_name)
     embeddings = OpenAIEmbeddings(api_key="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", model="text-embedding-3-large")
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     docs = text_splitter.split_documents(documents)
 
     vectorstore = FAISS.from_documents(docs, embeddings)
