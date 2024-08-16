@@ -34,7 +34,7 @@ from django.views.decorators.csrf import csrf_exempt
 from langchain.chains import RetrievalQAWithSourcesChain
 from openai import OpenAI
 client = OpenAI()
-OpenAI.api_key = "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"
+OpenAI.api_key = "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"
 from django.utils import timezone
 import uuid 
 import traceback
@@ -110,7 +110,7 @@ def query_pdf(query,zip_name):
     #custom_retriever = CustomMetadataRetriever(vectorstore=vectorstore, metadata_condition=metadata_condition)
 
     llm = ChatOpenAI(
-    openai_api_key="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",
+    openai_api_key="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",
     model_name='gpt-3.5-turbo',
     temperature=0.0
     )

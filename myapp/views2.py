@@ -2,8 +2,8 @@
 from langchain_community.embeddings import OpenAIEmbeddings
 #from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
-from langchain.llms import OpenAI
-from langchain.chat_models import ChatOpenAI
+
+from langchain_openai import ChatOpenAI
 from django.http import JsonResponse
 import json
 import requests
@@ -12,21 +12,22 @@ import os
 import shutil
 import logging
 import faiss
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
-from langchain.callbacks import get_openai_callback
+from langchain_community.callbacks import get_openai_callback
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from langchain.chains import RetrievalQAWithSourcesChain
-
-
+from langchain import hub
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains import create_retrieval_chain
 #from langchain.text_splitter import CharacterTextSplitter
 
 from langchain_openai import OpenAIEmbeddings
 
-from langchain.chains import RetrievalQA
-from langchain.llms import OpenAI
-from openai import OpenAI
+prompt = hub.pull("rlm/rag-prompt")
 import re
 blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=pdffornurenai;AccountKey=NfaInebhlvguuN9ZziAdwy1gyKZIfqmX1W1U1k/g/e0z1ZEsWqC7NXt8wSfWIQBusiN87/swIG95+AStJbrZTQ==;EndpointSuffix=core.windows.net")
 
@@ -99,7 +100,7 @@ def query_pdf(query,prompt,zip_name_path):
 
     # Continue with the rest of your query logic
     #text_field = "document_type"
-    embed = OpenAIEmbeddings(api_key="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", model="text-embedding-3-large")
+    embed = OpenAIEmbeddings(api_key="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", model="text-embedding-3-large")
     #index = pinecone.Index("sampledoc")
     loaded_vectorstore = FAISS.load_local(extracted_folder_path, embed,allow_dangerous_deserialization=True)
     #vectorstore = Pinecone(
@@ -109,17 +110,26 @@ def query_pdf(query,prompt,zip_name_path):
     #custom_retriever = CustomMetadataRetriever(vectorstore=vectorstore, metadata_condition=metadata_condition)
 
     llm = ChatOpenAI(
-    openai_api_key="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",
+    openai_api_key="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",
     model_name='gpt-3.5-turbo',
     temperature=0.0
-    )
-    qa = RetrievalQA.from_chain_type(
-    llm=llm,
-    chain_type="stuff",
-    #retriever=custom_retriever
-    #retriever=vectorstore.as_retriever()
-    retriever=loaded_vectorstore.as_retriever()
-    )
+    )   
+    # qa_chain = (
+    # {
+    #     "context": loaded_vectorstore.as_retriever(),
+    #     "question": RunnablePassthrough(),
+    # }
+    # | prompt
+    # | llm
+    # | StrOutputParser()
+    # )
+    retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
+
+    combine_docs_chain = create_stuff_documents_chain(llm, retrieval_qa_chat_prompt)
+    rag_chain = create_retrieval_chain(loaded_vectorstore.as_retriever(), combine_docs_chain)
+
+    #rag_chain.invoke({"input": "What are autonomous agents?"})
+
     #qa_with_sources = RetrievalQAWithSourcesChain.from_chain_type(
     #llm=llm,
     #chain_type="stuff",
@@ -147,7 +157,7 @@ def query_pdf(query,prompt,zip_name_path):
     # k=3  # return 3 most relevant docs
     #    )   
     with get_openai_callback() as cb:
-        result = qa.run(full_query)
+        result = rag_chain.invoke({"input":full_query})
         print(cb.total_cost)
     #result=qa_with_sources(full_query)
 
@@ -167,9 +177,13 @@ def query_pdf_view(request):
             result =query_pdf(message,prompt,zip_name_path=zip_name)
 
             # You can modify this response format based on your needs
+            final_answer = result.get('answer')
+
+    # Prepare the response data
             response_data = {
-                'answer': result,
+                'answer': final_answer,
             }
+            
             print(response_data)
             return JsonResponse(response_data)
        

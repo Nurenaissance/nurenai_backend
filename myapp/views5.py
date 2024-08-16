@@ -18,7 +18,7 @@ def incoming_call(request):
         """
         payload = {
             "phone_number": phone_number,
-            "task": backend_prompt,
+            "task": prompt,
             "model": "enhanced",
             "reduce_latency": True,
             "voice_id": 0,

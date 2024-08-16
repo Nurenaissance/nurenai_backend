@@ -21,7 +21,7 @@ from openai import OpenAI
 import shutil
 import os
 import re
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 import openai
 
 from langchain.document_loaders import PyPDFLoader
@@ -62,8 +62,8 @@ def upload_pdf_view(request):
 
     documents = loader.load()
     os.remove(local_file_name)
-    embeddings = OpenAIEmbeddings(api_key="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", model="text-embedding-3-large")
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    embeddings = OpenAIEmbeddings(api_key="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", model="text-embedding-3-large")
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
     docs = text_splitter.split_documents(documents)
 
     vectorstore = FAISS.from_documents(docs, embeddings)

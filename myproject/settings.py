@@ -52,7 +52,7 @@ MIDDLEWARE = [
      'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
-
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://sub.example.com",
@@ -77,7 +77,7 @@ TEMPLATES = [
         },
     },
 ]
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000','http://localhost:5174']
 
 WSGI_APPLICATION = "myproject.wsgi.application"
 
