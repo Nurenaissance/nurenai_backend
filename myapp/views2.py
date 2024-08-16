@@ -99,7 +99,7 @@ def query_pdf(query,prompt,zip_name_path):
 
     # Continue with the rest of your query logic
     #text_field = "document_type"
-    embed = OpenAIEmbeddings(api_key="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", model="text-embedding-3-large")
+    embed = OpenAIEmbeddings(api_key="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", model="text-embedding-3-large")
     #index = pinecone.Index("sampledoc")
     loaded_vectorstore = FAISS.load_local(extracted_folder_path, embed,allow_dangerous_deserialization=True)
     #vectorstore = Pinecone(
@@ -109,7 +109,7 @@ def query_pdf(query,prompt,zip_name_path):
     #custom_retriever = CustomMetadataRetriever(vectorstore=vectorstore, metadata_condition=metadata_condition)
 
     llm = ChatOpenAI(
-    openai_api_key="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",
+    openai_api_key="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",
     model_name='gpt-3.5-turbo',
     temperature=0.0
     )
