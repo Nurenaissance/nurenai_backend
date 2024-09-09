@@ -46,7 +46,7 @@ def upload_pdf_view(request):
 
     blob_client = container_client.get_blob_client(unique_filename)
     blob_client.upload_blob(uploaded_file)
-    local_file_name = os.path.join(r"C:\Users\Adarsh\MyProject\lang\vectorstores", unique_filename)
+    local_file_name = os.path.join(r"\vectorstores", unique_filename)
     download_blob(blob_client, local_file_name)
     file_path = f"https://{blob_service_client.account_name}.blob.core.windows.net/{container_name}/{unique_filename}"
     if uploaded_file.name.lower().endswith('.pdf'):

@@ -80,7 +80,7 @@ def query_pdf(query,prompt,zip_name_path):
 
     # Define paths
     # Define base paths
-    base_path = r"C:\Users\Adarsh\MyProject\lang\vectorstores"
+    base_path = r" \vectorstores"
     
     # Extract zip name without extension
     zip_name = os.path.splitext(os.path.basename(zip_name_path))[0]
