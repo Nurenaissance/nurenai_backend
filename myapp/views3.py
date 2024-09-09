@@ -33,8 +33,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from langchain.chains import RetrievalQAWithSourcesChain
 from openai import OpenAI
-client = OpenAI()
-OpenAI.api_key = "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"
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+OpenAI.api_key = os.getenv("OPENAI_API_KEY")
 from django.utils import timezone
 import uuid 
 import traceback
@@ -100,7 +100,7 @@ def query_pdf(query,zip_name):
 
     # Continue with the rest of your query logic
    
-    embed = OpenAIEmbeddings("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")
+    embed = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
     
     loaded_vectorstore = FAISS.load_local(extracted_folder_path, embed)
     #vectorstore = Pinecone(
@@ -110,7 +110,7 @@ def query_pdf(query,zip_name):
     #custom_retriever = CustomMetadataRetriever(vectorstore=vectorstore, metadata_condition=metadata_condition)
 
     llm = ChatOpenAI(
-    openai_api_key="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",
+    openai_api_key=os.getenv("OPENAI_API_KEY"),
     model_name='gpt-3.5-turbo',
     temperature=0.0
     )

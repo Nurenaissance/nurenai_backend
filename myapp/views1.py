@@ -26,7 +26,7 @@ import openai
 
 from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-client = OpenAI()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 import os
 import uuid  # Import the uuid module for generating unique filenames
@@ -62,7 +62,7 @@ def upload_pdf_view(request):
 
     documents = loader.load()
     os.remove(local_file_name)
-    embeddings = OpenAIEmbeddings(api_key="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", model="text-embedding-3-large")
+    embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"), model="text-embedding-3-large")
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     docs = text_splitter.split_documents(documents)
 
